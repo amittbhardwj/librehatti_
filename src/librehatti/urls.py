@@ -2,14 +2,25 @@ from django.conf.urls import patterns, include, url
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-#from librehatti.report.views import report
+
+from reports.register_generator import GenerateRegister
+from reports.views import SearchResult
+
 admin.autodiscover()
 
 
-urlpatterns = patterns('',url(r'^index/','librehatti.report.views.index'),url(r'^bill/','librehatti.report.views.bill'),
-       url(r'^display/','librehatti.report.views.display'), url(r'^$', 'librehatti.catalog.views.index'),
-        #url(r'^report/', 'librehatti.report.views.report'),
-        url(r'^catalog/', include('librehatti.catalog.urls')),
-        url(r'^useraccounts/', include('useraccounts.urls')),
-        url(r'^admin/', include(admin.site.urls)),
+urlpatterns = patterns('',
+    url(r'^$', 'librehatti.catalog.views.index'),
+    url(r'^catalog/', include('librehatti.catalog.urls')),
+    url(r'^useraccounts/', include('useraccounts.urls')),
+    url(r'^print/', include('librehatti.prints.urls')),
+    url(r'^admin/', include(admin.site.urls)),
+    url(r'^search/','librehatti.reports.search.search'),
+    url(r'^search_result/', SearchResult.as_view()),#'librehatti.reports.views.search_result'),
+    url(r'^bill/', 'librehatti.prints.views.bill'),
+    url(r'^bills/', include('librehatti.bills.urls')),
+    url(r'^suspense/', include('librehatti.suspense.urls')),
+    url(r'^generate_register/', GenerateRegister.as_view()),
+    url(r'^history/','librehatti.reports.previous_history.history'),
+    url(r'^details/','librehatti.reports.previous_history.details'),
 ) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
